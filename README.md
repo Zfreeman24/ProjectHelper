@@ -16,7 +16,7 @@ The Project Helper aims to bridge the gap between the desire to learn new skills
 
 The architecture of the Project Helper is designed to be intuitive and scalable, ensuring a seamless user experience while providing robust backend support for generating project ideas and managing user interactions. Below is the class diagram representing the system's architecture:
 
-![Class Diagram](class_diagram.png)
+![Class Diagram](classDiagram.png)
 
 ## Main Components
 

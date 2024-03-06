@@ -35,7 +35,3 @@ To get started with the Project Helper, users can sign up via the landing page, 
 ## Contributions
 
 We welcome contributions from the community. If you're interested in contributing, please fork the repository and submit a pull request with your proposed changes.
-
-## License
-
-The Project Helper is open-source software licensed under the [MIT license](LICENSE).

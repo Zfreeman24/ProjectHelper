@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import './App.css';
 
+//Test
+
 function App() {
   const [formState, setFormState] = useState({
     skills: '',
     difficulty: '',
     additionalInfo: '',
   });
+
+  const [currentPage, setCurrentPage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,28 +43,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h2>Welcome to Project Helper!</h2>
-        <form onSubmit={handleSubmit} className="form">
-          <div className="input-group">
-            <label>Skills You Want to Improve:</label>
-            <input type="text" name="skills" value={formState.skills} onChange={handleChange} />
-          </div>
-          <div className="input-group">
-            <label>Difficulty Level:</label>
-            <select name="difficulty" value={formState.difficulty} onChange={handleChange}>
-              <option value="">Select Difficulty</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-          </div>
-          <div className="input-group">
-            <label>Additional Info (optional):</label>
-            <textarea name="additionalInfo" value={formState.additionalInfo} onChange={handleChange}></textarea>
-          </div>
-          <button type="submit">Generate Project Idea</button>
-        </form>
+        <h2>NaviProject</h2>
+        <p>🚀 A Project Helper designed to help Computer Science students learn and grow.</p>
       </header>
+      <div className="navbar">
+      <a1 href="#home" className={`home-link ${currentPage === 'home' ? 'active' : ''}`} onClick={() => setCurrentPage('home')}>NaviProject</a1>
+        <div className="nav-links">
+          <a href="#login" className={currentPage === 'login' ? 'active' : ''} onClick={() => setCurrentPage('login')}>Login</a>
+          <a href="#signup" className={currentPage === 'signup' ? 'active' : ''} onClick={() => setCurrentPage('signup')}>Signup</a>
+          <a href="#team" className={currentPage === 'team' ? 'active' : ''} onClick={() => setCurrentPage('team')}>Team</a>
+        </div>
+      </div>
     </div>
   );
 }

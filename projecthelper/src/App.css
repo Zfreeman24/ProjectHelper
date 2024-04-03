@@ -9,8 +9,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(80px + 2vmin);
   color: white;
+}
+
+.App-header h2 {
+  max-width: 40ch;
+  font-family: Helvetica now,sans-serif;
+  text-shadow: none;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: 500;
+  line-height: 1em;
+}
+
+.App-header p {
+  letter-spacing: .03em;
+  font-family: Helvetica now,sans-serif;
+  font-size: 0.5em;
+  font-weight: 400;
+  color: #00FFFF;
+  letter-spacing: .03em;
+  font-family: Helvetica now,sans-serif;
+  font-weight: 400;
 }
 
 .form {
@@ -40,3 +62,42 @@ button {
 button:hover {
   background-color: #36a9e1;
 }
+
+/* Footer */
+
+.App-footer {
+  background-color: #5cc2f5;
+  text-align: justify;
+} 
+
+
+/* Nav Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00FFFF;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 0 20px; /* Keep your existing padding */
+}
+
+.navbar a, .nav-links a {
+  padding: 16px;
+  text-decoration: none;
+  color: var(--dark-slate-blue); /* Ensure this color is defined, or replace it */
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px; /* Space between the right-aligned links */
+  margin-right: 1000px; /* Push the group a bit to the left */
+}
+
+/* Target the first link, assumed to be 'Home', to add margin */
+.navbar a1 {
+  margin-left: 50px; /* Push 'Home' a bit to the right */
+}
+
+

@@ -17,18 +17,20 @@ def register():
     email = data['email']
     password = data['password']
     
-    verification_token = str(uuid.uuid4())
+    isVerified = False;
+    
     print("success")
     user_data = {
         'name': name,
         'email': email,
         'password': password,
-        'verification_token': verification_token
+        'isVerified': isVerified
     }
     
     collection = db["login_info"]
     collection.insert_one(user_data)
     
+    verification_token = ''
     sendEmail.send_verification_email(email, verification_token)
     
     

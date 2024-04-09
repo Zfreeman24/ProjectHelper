@@ -1,76 +1,83 @@
-import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-function Signup(){
-    const [name, setName] = useState();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const navigate = useNavigate();
+function Signup() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        axios.post('http://localhost:3001/register', {name, email, password})
-            .then(result => {console.log(result);
-                navigate('/login');
-            }).catch(err => console.log(err));
-    }
+  const handleSubmit = (e) => {
+    console.log(name, email, password);
+    e.preventDefault();
+    axios
+      .post("http://127.0.0.1:5000/register", { name, email, password })
+      .then((response) => {
+        console.log(response.data);
+        navigate("/login"); // Redirect to the login page upon successful registration
+      })
+      .catch((error) => {
+        console.error("Registration failed:", error);
+        // Optionally, display an error message to the user here
+      });
+  };
 
-    return(
-        <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
-            <div className="bg-white p-3 rounded w-25">
-                <h2>Register</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmllFor="email">
-                            <strong>Name</strong>
-                        </label>
-                        <input 
-                            type ="text"
-                            placeholder ="Enter Name"
-                            autoComplete="off"
-                            name="email"
-                            className="form-control rounded-0"
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label htmlFor="email">
-                            <strong>Email</strong>
-                        </label>
-                        <input 
-                            type="email"
-                            placeholder="Enter Email"
-                            autoComplete="off"
-                            name="email"
-                            className="form-control rounded-0"
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="mb-3">
-                        <label htmlFor="email">
-                            <strong>Password</strong>
-                        </label>
-                        <input 
-                            type="password"
-                            placeholder="Enter Password"
-                            name="password"
-                            className="form-control rounded-0"
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-success w-100 rounded-0">Register</button>
-                </form>
-                    <p>Already Have an Account</p>
-                    <Link to='/login' className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Login</Link>
-            </div>
-        </div>
-    );
+  return (
+    <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
+      <div className="bg-white p-3 rounded w-25">
+        <h2>Register</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              <strong>Name</strong>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="name"
+              placeholder="Enter Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              <strong>Email</strong>
+            </label>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              <strong>Password</strong>
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              id="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="btn btn-success w-100">
+            Register
+          </button>
+        </form>
+        <p className="mt-2">Already have an account?</p>
+        <Link to="/login" className="btn btn-light w-100">
+          Login
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 export default Signup;

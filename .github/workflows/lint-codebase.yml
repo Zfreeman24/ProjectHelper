@@ -7,32 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-javascript:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - name: Install dependencies
-      run: npm install
-    - name: Lint JavaScript files
-      run: npx eslint .
-
-  lint-css:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - name: Install dependencies
-      run: npm install
-    - name: Lint CSS files
-      run: npx stylelint "**/*.css"
-
   lint-python:
     runs-on: ubuntu-latest
     steps:

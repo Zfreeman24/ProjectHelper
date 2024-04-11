@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 function Login(){
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
@@ -11,11 +12,11 @@ function Login(){
 
     const handleSubmit = (e) =>{
         e.preventDefault();
-        axios.post('http://localhost:3001/login', { email, password})
+        axios.post('http://127.0.0.1:5000/login', { email, password})
             .then(result => {
                 console.log(result);
-
-                if (result.data === "Success"){
+                canLogin = loginController.verifyLogin(email, password)
+                if (result.data === "Success" && canLogin == True ){
                     navigate('/home');
                 }
             }).catch(err => console.log(err));

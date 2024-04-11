@@ -1,42 +1,41 @@
-from flask import Flask, request, jsonify
-from pymongo import MongoClient
+from flask import Flask, request
+import bcrypt
 from flask_cors import CORS
-import uuid
-import sendEmail
+from pymongo import MongoClient
+from dotenv import load_dotenv
+import logging
+import os
 
+load_dotenv()
+
+client = MongoClient(os.getenv('MONGO_CLIENT'))  
+db = client[os.getenv('CLIENT')]
+collection = db['login_info'] 
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient('mongodb+srv://zacharyjames888:utsa5150@cluster0.13apwst.mongodb.net/')  
-db = client['project_helper'] 
-
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/login', methods=['POST'])
+def verifyLogin():
+    logging.info("Grabbing data")
     data = request.json
-    name = data['name']
     email = data['email']
-    password = data['password']
-    
-    isVerified = False;
-    
-    print("success")
-    user_data = {
-        'name': name,
-        'email': email,
-        'password': password,
-        'isVerified': isVerified
-    }
-    
-    collection = db["login_info"]
-    collection.insert_one(user_data)
-    
-    verification_token = ''
-    sendEmail.send_verification_email(email, verification_token)
-    
-    
-    return jsonify({'message': 'Registration successful. Verification email sent.'})
-    
+    user_submitted_password = data['password'].encode('utf-8')  # Encode the password into bytes
 
+    user = collection.find_one({'email': email})
+    if user:
+        stored_hashed_password = user['password']  # Assuming this is already in bytes from MongoDB
+        isVerified = user['isVerified']
+    
+        # Verifying the password
+        if bcrypt.checkpw(user_submitted_password, stored_hashed_password) and isVerified:
+            logging.info("Login success")
+            return "Login successful", 200
+        else:
+            logging.info("Login failed")
+            return "Invalid credentials or not verified", 401
+    else:
+        logging.info("No user found with that email")
+        return "User not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)

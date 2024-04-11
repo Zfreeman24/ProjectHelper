@@ -6,16 +6,22 @@ function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isVerified, setIsVerified] = useState(false); // State to hold the verification status
+  const [showModal, setShowModal] = useState(false);  // State to control the visibility of the modal
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    console.log(name, email, password);
     e.preventDefault();
+    console.log(name, email, password, isVerified);
     axios
-      .post("http://127.0.0.1:5000/register", { name, email, password })
+      .post("http://127.0.0.1:5000/register", { name, email, password, isVerified })
       .then((response) => {
         console.log(response.data);
-        navigate("/login"); // Redirect to the login page upon successful registration
+        setShowModal(true);  // Show the modal on successful registration
+        setTimeout(() => {
+          setShowModal(false); // Automatically close the modal after 3 seconds
+          navigate("/login");  // Redirect to the login page
+        }, 3000);
       })
       .catch((error) => {
         console.error("Registration failed:", error);
@@ -29,9 +35,7 @@ function Signup() {
         <h2>Register</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              <strong>Name</strong>
-            </label>
+            <label htmlFor="name" className="form-label"><strong>Name</strong></label>
             <input
               type="text"
               className="form-control"
@@ -42,9 +46,7 @@ function Signup() {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              <strong>Email</strong>
-            </label>
+            <label htmlFor="email" className="form-label"><strong>Email</strong></label>
             <input
               type="email"
               className="form-control"
@@ -55,9 +57,7 @@ function Signup() {
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              <strong>Password</strong>
-            </label>
+            <label htmlFor="password" className="form-label"><strong>Password</strong></label>
             <input
               type="password"
               className="form-control"
@@ -67,15 +67,41 @@ function Signup() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn btn-success w-100">
-            Register
-          </button>
+          <div className="mb-3 form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="verifyCheck"
+              checked={isVerified}
+              onChange={(e) => setIsVerified(e.target.checked)}
+            />
+            <label className="form-check-label" htmlFor="verifyCheck">Please click on the box to verify</label>
+          </div>
+          <button type="submit" className="btn btn-success w-100">Register</button>
         </form>
         <p className="mt-2">Already have an account?</p>
-        <Link to="/login" className="btn btn-light w-100">
-          Login
-        </Link>
+        <Link to="/login" className="btn btn-light w-100">Login</Link>
       </div>
+
+      {/* Modal for successful registration */}
+      {showModal && (
+        <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Success</h5>
+                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p>Registration successful!</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,7 +10,7 @@ load_dotenv()
 
 client = MongoClient(os.getenv('MONGO_CLIENT'))  
 db = client[os.getenv('CLIENT')]
-collection = db['login_info'] 
+collection = db[os.getenv('COLLECTION')] 
 app = Flask(__name__)
 CORS(app)
 

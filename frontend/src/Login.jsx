@@ -15,8 +15,7 @@ function Login(){
         axios.post('http://127.0.0.1:5000/login', { email, password})
             .then(result => {
                 console.log(result);
-                canLogin = loginController.verifyLogin(email, password)
-                if (result.data === "Success" && canLogin == True ){
+                if (result.data === "Success"){
                     navigate('/home');
                 }
             }).catch(err => console.log(err));

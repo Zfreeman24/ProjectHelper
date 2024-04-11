@@ -12,7 +12,6 @@ function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(name, email, password, isVerified);
     axios
       .post("http://127.0.0.1:5000/register", { name, email, password, isVerified })
       .then((response) => {

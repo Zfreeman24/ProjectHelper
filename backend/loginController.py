@@ -19,15 +19,16 @@ def verifyLogin():
     logging.info("Grabbing data")
     data = request.json
     email = data['email']
-    user_submitted_password = data['password'].encode('utf-8')  # Encode the password into bytes
+    user_submitted_password = data['password'].encode('utf-8')
 
     user = collection.find_one({'email': email})
     if user:
-        stored_hashed_password = user['password']  # Assuming this is already in bytes from MongoDB
+        stored_hashed_password = user['password'] 
         isVerified = user['isVerified']
     
         # Verifying the password
-        if bcrypt.checkpw(user_submitted_password, stored_hashed_password) and isVerified:
+        if bcrypt.checkpw(user_submitted_password, 
+                          stored_hashed_password) and isVerified:
             logging.info("Login success")
             return "Login successful", 200
         else:
@@ -38,4 +39,4 @@ def verifyLogin():
         return "User not found", 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.getenv('FLASK_DEBUG', False))

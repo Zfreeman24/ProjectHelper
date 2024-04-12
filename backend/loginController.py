@@ -14,6 +14,7 @@ collection = db[os.getenv('COLLECTION')]
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/login', methods=['POST'])
 def verifyLogin():
     logging.info("Grabbing data")

@@ -14,6 +14,7 @@ CORS(app)
 client = MongoClient(os.getenv('MONGO_CLIENT'))
 db = client[os.getenv('CLIENT')]
 
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
@@ -36,6 +37,7 @@ def register():
     collection.insert_one(user_data)
     logging.info("Registration successful")
     return jsonify({'message': 'Registration successful.'})
+
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False))

@@ -28,7 +28,8 @@ def verifyLogin():
         isVerified = user['isVerified']
 
         # Verifying the password
-        if bcrypt.checkpw(user_submitted_password, stored_hashed_password) and isVerified:
+        if bcrypt.checkpw(user_submitted_password, 
+                          stored_hashed_password) and isVerified:
             logging.info("Login success")
             return "Login successful", 200
         else:

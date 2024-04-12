@@ -8,9 +8,9 @@ import os
 
 load_dotenv()
 
-client = MongoClient(os.getenv('MONGO_CLIENT'))  
+client = MongoClient(os.getenv('MONGO_CLIENT'))
 db = client[os.getenv('CLIENT')]
-collection = db[os.getenv('COLLECTION')] 
+collection = db[os.getenv('COLLECTION')]
 app = Flask(__name__)
 CORS(app)
 
@@ -23,12 +23,11 @@ def verifyLogin():
 
     user = collection.find_one({'email': email})
     if user:
-        stored_hashed_password = user['password'] 
+        stored_hashed_password = user['password']
         isVerified = user['isVerified']
-    
+
         # Verifying the password
-        if bcrypt.checkpw(user_submitted_password, 
-                          stored_hashed_password) and isVerified:
+        if bcrypt.checkpw(user_submitted_password, stored_hashed_password) and isVerified:
             logging.info("Login success")
             return "Login successful", 200
         else:
@@ -37,6 +36,7 @@ def verifyLogin():
     else:
         logging.info("No user found with that email")
         return "User not found", 404
+
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False))

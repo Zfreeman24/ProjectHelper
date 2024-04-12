@@ -11,8 +11,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-client = MongoClient(os.getenv('MONGO_CLIENT'))  
-db = client[os.getenv('CLIENT')] 
+client = MongoClient(os.getenv('MONGO_CLIENT'))
+db = client[os.getenv('CLIENT')]
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -21,7 +21,7 @@ def register():
     email = data['email']
     password = data['password']
     isVerified = data['isVerified']
-    #bcrypt the password
+    # bcrypt the password
     password = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password, salt)
@@ -39,6 +39,3 @@ def register():
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False))
-
-    
-    

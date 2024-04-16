@@ -1,62 +1,61 @@
-import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-
-function Login(){
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+function Login() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://127.0.0.1:5000/login', { email, password})
-            .then(result => {
-                console.log(result);
-                if (result.data === "Success"){
+        axios.post('http://127.0.0.1:5000/login', { email, password })
+            .then(response => {
+                console.log(response);
+                if (response.status === 200 && response.data.status === 'success') {
                     navigate('/home');
+                } else {
+                    alert(response.data.message); // Display error message from the server
                 }
-            }).catch(err => console.log(err));
-    }
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    // that falls out of the range of 2xx
+                    alert(error.response.data.message);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.log(error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.log('Error', error.message);
+                }
+            });
+    };
 
-    return(
+    return (
         <div className="d-flex justify-content-center align-items-center bg-secondary vh-100">
             <div className="bg-white p-3 rounded w-25">
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
-                        <label htmlFor="email"> <strong>Email</strong> </label>
-                        <input 
-                            type="email"
-                            placeholder="Enter email"
-                            autoComplete="off"
-                            name="email"
-                            className="form-control rounded-0"
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
+                        <label htmlFor="email" className="form-label">Email</label>
+                        <input type="email" className="form-control" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" required />
                     </div>
-
                     <div className="mb-3">
-                        <label htmlFor="email"> <strong>Password</strong> </label>
-                        <input 
-                            type="password"
-                            placeholder="Enter password"
-                            name="password"
-                            className="form-control rounded-0"
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <label htmlFor="password" className="form-label">Password</label>
+                        <input type="password" className="form-control" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password" required />
                     </div>
-
-                    <button type="submit" className="btn btn-success w-100 rounded-0">Login</button>
+                    <button type="submit" className="btn btn-success w-100">Login</button>
                 </form>
-
-                <p>Don't Have an Account</p>
-                <Link to='/register' className="btn btn-default border w-100 bg-light rounded-0 text-decoration-none">Sign Up</Link>
+                <p className="mt-3">Don't have an account?</p>
+                <Link to="/register" className="btn btn-primary w-100">Sign Up</Link>
             </div>
         </div>
-    )
+    );
 }
 
 export default Login;

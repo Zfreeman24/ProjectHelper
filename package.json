@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "scripts": {
+    "start:api-login": "python ./backend/loginController.py",
+    "start:api-signup": "python ./backend/signupController.py",
+    "start:frontend": "npm run dev",  
+    "start:all": "concurrently \"npm run start:api-login\" \"npm run start:api-signup\" \"npm run start:frontend\""
+  }
+}

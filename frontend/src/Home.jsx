@@ -1,30 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const [language, setLanguage] = useState('');
     const [skills, setSkills] = useState('');
     const [technologies, setTechnologies] = useState('');
-    const [projectIdea, setProjectIdea] = useState(null);
+    const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Chat GPT API or any relevant API URL and data structure
-        const apiUrl = 'YOUR_CHAT_GPT_API_URL';
-        const postData = {
-            language,
-            skills,
-            technologies
-        };
-
-        try {
-            const response = await axios.post(apiUrl, postData);
-            setProjectIdea(response.data); // Assuming the API returns a structured project idea
-        } catch (error) {
-            console.error('Error fetching project ideas:', error);
-            alert('Failed to fetch project ideas');
-        }
+        // Pass form data via navigate to the Generation component
+        navigate('/generation', { state: { language, skills, technologies } });
     };
 
     return (
@@ -52,15 +39,6 @@ function Home() {
                 </div>
                 <button type="submit" className="btn btn-primary">Generate Project Idea</button>
             </form>
-
-            {projectIdea && (
-                <div className="mt-4">
-                    <h3>Project Idea: {projectIdea.title}</h3>
-                    <p><strong>Description:</strong> {projectIdea.description}</p>
-                    <p><strong>Recommended Languages:</strong> {projectIdea.languages.join(', ')}</p>
-                    <p><strong>Technologies Needed:</strong> {projectIdea.technologies.join(', ')}</p>
-                </div>
-            )}
         </div>
     );
 }

@@ -18,6 +18,7 @@ login_collection = db['login_info']  # Assuming you use the same collection for 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
+
 @app.route('/login', methods=['POST'])
 def verify_login():
     data = request.json
@@ -29,6 +30,7 @@ def verify_login():
         return jsonify({'message': 'Login successful', 'status': 'success'}), 200
     else:
         return jsonify({'message': 'Invalid credentials or not verified', 'status': 'error'}), 401
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -51,6 +53,7 @@ def register():
     login_collection.insert_one(user_data)
     logging.info("Registration successful")
     return jsonify({'message': 'Registration successful.'})
+
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False))

@@ -8,11 +8,13 @@ app = Flask(__name__)
 CORS(app)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
+
 @app.route('/generate', methods=['POST'])
 def generate_project():
     data = request.get_json()
     readme_content = generate_idea_with_gpt(data['language'], data['skills'], data['technologies'])
     return jsonify({'readme_content': readme_content})
+
 
 @app.route('/create-repo', methods=['POST'])
 def create_repository():
@@ -21,6 +23,7 @@ def create_repository():
     readme_content = data['readmeContent']
     repo_url = create_github_repo("New Project", readme_content, token)
     return jsonify({'repoUrl': repo_url})
+
 
 def generate_idea_with_gpt(language, skills, technologies):
     headers = {
@@ -63,6 +66,7 @@ def generate_idea_with_gpt(language, skills, technologies):
         print(f"Request failed: {e}")
         return "Failed to generate README due to API error."
 
+
 def create_github_repo(repo_name, readme_content, token):
     headers = {'Authorization': f'token {token}'}
     data = {'name': repo_name}
@@ -96,6 +100,7 @@ def create_github_repo(repo_name, readme_content, token):
         return repo_url
     else:
         return "Failed to create repository"
+
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False), port=5001)

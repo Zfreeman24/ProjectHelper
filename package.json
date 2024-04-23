@@ -3,9 +3,12 @@
     "concurrently": "^8.2.2"
   },
   "scripts": {
-    "start:api-login": "python ./backend/loginController.py",
-    "start:api-signup": "python ./backend/signupController.py",
-    "start:frontend": "npm run dev",  
-    "start:all": "concurrently \"npm run start:api-login\" \"npm run start:api-signup\" \"npm run start:frontend\""
+    "start:project-generator": "cd backend && python projectGenerator.py",
+    "start:auth-controller": "cd backend && python auth_controller.py",
+    "start:all": "concurrently \"npm run start:project-generator\" \"npm run start:auth-controller\"",
+    "start": "npm run start:all"
+  },
+  "dependencies": {
+    "react-progressbar": "^1.2.0"
   }
 }

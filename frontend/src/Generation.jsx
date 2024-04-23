@@ -1,31 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';  // Import useLocation from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+import LinearProgress from '@mui/material/LinearProgress';
 
 function Generation() {
     const location = useLocation();
-    const [language, setLanguage] = useState('');
-    const [skills, setSkills] = useState('');
-    const [technologies, setTechnologies] = useState('');
-    const [gitHubToken, setGitHubToken] = useState('');  // Ensure gitHubToken's initial state
+    const [gitHubToken, setGitHubToken] = useState('');
+    const [repoName, setRepoName] = useState('');
     const [revealedText, setRevealedText] = useState('');
     const [repoUrl, setRepoUrl] = useState('');
+    const [progress, setProgress] = useState(0);
 
     useEffect(() => {
         if (location.state) {
+            setProgress(10);  // Initial progress for starting operation
             const { language, skills, technologies } = location.state;
-            setLanguage(language);
-            setSkills(skills);
-            setTechnologies(technologies);
             generateReadme(language, skills, technologies);
         }
     }, [location]);
 
     const generateReadme = async (language, skills, technologies) => {
-        const apiUrl = 'http://localhost:5001/generate';  // Adjust as necessary
+        const apiUrl = 'http://localhost:5001/generate';
+        setProgress(20); // Set progress as generation starts
         try {
             const response = await axios.post(apiUrl, { language, skills, technologies });
-            revealText(response.data.readme_content);
+            setRevealedText(response.data.readme_content);
+            setProgress(100); // Set halfway when generation is done
+            setTimeout(() => {
+                setProgress(0);
+                setShowProgress(false); 
+            }, 2000);
         } catch (error) {
             console.error('Error generating project idea:', error);
             alert('Failed to generate project idea. Please try again.');
@@ -33,52 +38,46 @@ function Generation() {
     };
 
     const handleRepoCreation = async (e) => {
-        e.preventDefault();
-        const apiUrl = 'http://localhost:5001/create-repo';  // Adjust as necessary
-
+        e.preventDefault(); 
+        const apiUrl = 'http://localhost:5001/create-repo';
         try {
             const response = await axios.post(apiUrl, {
                 gitHubToken,
+                repoName,
                 readmeContent: revealedText
             });
-            setRepoUrl(response.data.repoUrl);
+            if (response.data.repoUrl) {
+                setRepoUrl(response.data.repoUrl);
+            } else {
+                alert('Failed to create GitHub repository. Please check the provided GitHub token and try again.');
+            }
         } catch (error) {
             console.error('Error creating GitHub repository:', error);
             alert('Failed to create GitHub repository. Please check the provided GitHub token and try again.');
         }
     };
 
-    const revealText = (text) => {
-        const speed = 50;  // Speed in milliseconds
-        let index = 0;
-        let textSoFar = '';
-
-        const intervalId = setInterval(() => {
-            if (index < text.length) {
-                textSoFar += text.charAt(index);
-                setRevealedText(textSoFar);
-                index++;
-            } else {
-                clearInterval(intervalId);
-            }
-        }, speed);
-    };
-
     return (
         <div className="container mt-5">
             <h2>Generate Project Idea</h2>
-            {/* Display any form inputs or controls if necessary */}
+            <LinearProgress variant="determinate" value={progress} />
             {revealedText && (
                 <div>
-                    <pre>{revealedText}</pre>
-                    <form onSubmit={handleRepoCreation}>
+                    <ReactMarkdown>{revealedText}</ReactMarkdown>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <input
+                            type="text"
+                            value={repoName}
+                            onChange={e => setRepoName(e.target.value)}
+                            placeholder="Enter your Repository Name"
+                        />
                         <input
                             type="text"
                             value={gitHubToken}
                             onChange={e => setGitHubToken(e.target.value)}
                             placeholder="Enter your GitHub token here"
                         />
-                        <button type="submit">Create GitHub Repository</button>
+                        <button onClick={handleRepoCreation}>Create GitHub Repository</button>
                     </form>
                 </div>
             )}

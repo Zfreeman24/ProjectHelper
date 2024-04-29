@@ -1,0 +1,32 @@
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: .DockerFile  # Explicitly specify the Dockerfile name
+    ports:
+      - 5000
+      - 5001
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - ./backend:/backend
+    command: /backend/start_services.sh
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: .DockerFile  # Explicitly specify the Dockerfile name
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+
+volumes:
+  node_modules:

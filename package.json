@@ -3,8 +3,8 @@
     "concurrently": "^8.2.2"
   },
   "scripts": {
-    "start:project-generator": "cd backend && python projectGenerator.py",
-    "start:auth-controller": "cd backend && python auth_controller.py",
+    "start:project-generator": "cd backend && python -m services.authentication_service",
+    "start:auth-controller": "cd backend && python -m services.project_generation_service",
     "start:all": "concurrently \"npm run start:project-generator\" \"npm run start:auth-controller\"",
     "start": "npm run start:all"
   },

@@ -9,7 +9,7 @@ function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://127.0.0.1:5000/login', { email, password })
+        axios.post('http://localhost:5000/login', { email, password })
             .then(response => {
                 console.log(response);
                 if (response.status === 200 && response.data.status === 'success') {
@@ -34,6 +34,7 @@ function Login() {
                     console.log('Error', error.message);
                 }
             });
+        console.log('Form submitted');
     };
 
     return (
@@ -41,7 +42,7 @@ function Login() {
             <div className="bg-white p-3 rounded w-25">
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
+                    <div className="mb-3"> 
                         <label htmlFor="email" className="form-label">Email</label>
                         <input type="email" className="form-control" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" required />
                     </div>

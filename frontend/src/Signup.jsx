@@ -13,7 +13,7 @@ function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://127.0.0.1:5000/register", { name, email, password, isVerified })
+      .post('http://localhost:5000/register', { name, email, password, isVerified }, { withCredentials: false })
       .then((response) => {
         console.log(response.data);
         setShowModal(true);  // Show the modal on successful registration
@@ -23,9 +23,21 @@ function Signup() {
         }, 3000);
       })
       .catch((error) => {
-        console.error("Registration failed:", error);
-        // Optionally, display an error message to the user here
-      });
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error("Error data:", error.response.data);
+            console.error("Error status:", error.response.status);
+            console.error("Error headers:", error.response.headers);
+        } else if (error.request) {
+            // The request was made but no response was received
+            console.error("Error request:", error.request);
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('Error', error.message);
+        }
+        console.error("Error config:", error.config);
+    });
   };
 
   return (

@@ -9,6 +9,7 @@
     "start": "npm run start:all"
   },
   "dependencies": {
+    "docker": "^1.0.0",
     "react-progressbar": "^1.2.0"
   }
 }

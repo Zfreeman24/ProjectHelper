@@ -27,8 +27,10 @@ class AuthenticationService(AuthInterface):
             return False, 'Invalid credentials or not verified'
 
     def register(self, name, email, password, is_verified):
+        if isinstance(password, str):  # Check if the password is a string and convert if necessary
+            password = password.encode('utf-8')
         salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        hashed_password = bcrypt.hashpw(password, salt)
         user_data = {
             'name': name,
             'email': email,

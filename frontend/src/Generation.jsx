@@ -38,7 +38,11 @@ function Generation() {
     };
 
     const handleRepoCreation = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
+        if (!gitHubToken || !repoName || !revealedText) {
+            alert('Please enter GitHub token, repository name, and generate README before creating repository.');
+            return;
+        }
         const apiUrl = 'http://localhost:5001/create-repo';
         try {
             const response = await axios.post(apiUrl, {
@@ -56,7 +60,7 @@ function Generation() {
             alert('Failed to create GitHub repository. Please check the provided GitHub token and try again.');
         }
     };
-
+    
     return (
         <div className="container mt-5">
             <h2>Generate Project Idea</h2>

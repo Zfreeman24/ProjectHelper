@@ -1,53 +1,41 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
-from authentication_service import AuthenticationService
+from backend.services.authentication_service import AuthenticationService
 
 class TestAuthenticationService(unittest.TestCase):
 
-    def setUp(self):
-        self.auth_service = AuthenticationService()
+    @patch('backend.services.authentication_service.login_collection')
+    @patch('bcrypt.checkpw', return_value=True)
+    def test_verify_login_success(self, mock_checkpw, mock_collection):
+        mock_collection.find_one.return_value = {
+            'email': 'test@example.com', 
+            'password': b'$2b$12$C1jlVZo9gL4g9Yb3ZB.pSOOQphKJd9/ynl3tWJYW7ETsNOy1gah0O', 
+            'isVerified': True
+        }
+        result = AuthenticationService.verify_login('test@example.com', 'password')
+        self.assertTrue(result[0])
+        self.assertEqual(result[1], 'Login successful')
 
-    def test_verify_login_success(self):
-        email = 'test@example.com'
-        password = 'password123'
-        with patch('authentication_service.login_collection') as mock_collection:
-            mock_user = {'email': email, 'password': b'$2b$12$C1b2B7k8cN0c9d3e4f5g6h7i8j9k0l1', 'isVerified': True}
-            mock_collection.find_one.return_value = mock_user
-            success, message = self.auth_service.verify_login(email, password)
-        
-        self.assertTrue(success)
-        self.assertEqual(message, 'Login successful')
+    def test_verify_login_invalid_credentials(self):
+        with patch('backend.services.authentication_service.login_collection.find_one', return_value=None):
+            result = AuthenticationService.verify_login('invalid@email.com', 'wrongpassword')
+            self.assertFalse(result[0])
+            self.assertEqual(result[1], 'Invalid credentials or not verified')
 
-    def test_verify_login_wrong_password(self):
-        email = 'test@example.com'
-        password = 'wrongpassword'
-        with patch('authentication_service.login_collection') as mock_collection:
-            mock_user = {'email': email, 'password': b'$2b$12$C1b2B7k8cN0c9d3e4f5g6h7i8j9k0l1', 'isVerified': True}
-            mock_collection.find_one.return_value = mock_user
-            success, message = self.auth_service.verify_login(email, password)
-        
-        self.assertFalse(success)
-        self.assertEqual(message, 'Invalid credentials or not verified')
+    @patch('backend.services.authentication_service.login_collection')
+    def test_verify_login_not_verified(self, mock_collection):
+        mock_collection.find_one.return_value = {
+            'email': 'test@example.com', 
+            'password': b'$2b$12$C1jlVZo9gL4g9Yb3ZB.pSOOQphKJd9/ynl3tWJYW7ETsNOy1gah0O', 
+            'isVerified': False
+        }
+        result = AuthenticationService.verify_login('test@example.com', 'password')
+        self.assertFalse(result[0])
+        self.assertEqual(result[1], 'Invalid credentials or not verified')
 
-    def test_verify_login_not_verified(self):
-        email = 'test@example.com'
-        password = 'password123'
-        with patch('authentication_service.login_collection') as mock_collection:
-            mock_user = {'email': email, 'password': b'$2b$12$C1b2B7k8cN0c9d3e4f5g6h7i8j9k0l1', 'isVerified': False}
-            mock_collection.find_one.return_value = mock_user
-            success, message = self.auth_service.verify_login(email, password)
-        
-        self.assertFalse(success)
-        self.assertEqual(message, 'Invalid credentials or not verified')
-
-    def test_verify_login_user_not_found(self):
-        email = 'test@example.com'
-        password = 'password123'
-        with patch('authentication_service.login_collection') as mock_collection:
-            mock_collection.find_one.return_value = None
-            success, message = self.auth_service.verify_login(email, password)
-        
-        self.assertFalse(success)
-        self.assertEqual(message, 'Invalid credentials or not verified')
-
+    def test_register_success(self):
+        with patch('backend.services.authentication_service.login_collection.insert_one') as mock_insert:
+            result = AuthenticationService.register('Test User', 'test@example.com', 'password123', True)
+            self.assertEqual(result, 'Registration successful.')
+            mock_insert.assert_called_once()

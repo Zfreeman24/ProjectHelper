@@ -19,14 +19,14 @@ login_collection = db['login_info']
 logging.basicConfig(level=logging.INFO)
 
 class AuthenticationService(AuthInterface):
-    def verify_login(self, email, password):
+    def verify_login(email, password):
         user = login_collection.find_one({'email': email})
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password']) and user['isVerified']:
             return True, 'Login successful'
         else:
             return False, 'Invalid credentials or not verified'
 
-    def register(self, name, email, password, is_verified):
+    def register(name, email, password, is_verified):
         if isinstance(password, str):  # Check if the password is a string and convert if necessary
             password = password.encode('utf-8')
         salt = bcrypt.gensalt()

@@ -2,26 +2,42 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from flask_login import LoginManager, login_user, UserMixin, login_required, logout_user, current_user
 import bcrypt
 import os
 import logging
+import secrets
 from ..interfaces.auth_interface import AuthInterface
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = secrets.token_hex(16)
 
 client = MongoClient(os.getenv('MONGO_CLIENT'))
 db = client[os.getenv('CLIENT')]
 login_collection = db['login_info']
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 logging.basicConfig(level=logging.INFO)
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
 
 class AuthenticationService(AuthInterface):
     def verify_login(email, password):
         user = login_collection.find_one({'email': email})
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password']) and user['isVerified']:
+            user_obj = User(user['_id'])  
+            login_user(user_obj)  
             return True, 'Login successful'
         else:
             return False, 'Invalid credentials or not verified'
@@ -57,6 +73,19 @@ def register_route():
     data = request.json
     message = auth_service.register(data['name'], data['email'], data['password'], data['isVerified'])
     return jsonify({'message': message})
+
+@app.route('/check_auth')
+def check_auth():
+    if current_user.is_authenticated:
+        return jsonify({'authenticated': True, 'user_id': current_user.id})
+    else:
+        return jsonify({'authenticated': False})
+    
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()  
+    return jsonify({'message': 'Logged out successfully'})
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_DEBUG', False))

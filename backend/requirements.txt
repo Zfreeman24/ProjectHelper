@@ -5,3 +5,4 @@ python-dotenv==1.0.1
 python_bcrypt==0.3.2
 Requests==2.31.0
 Werkzeug==2.2.2
+flask-login

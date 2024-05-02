@@ -18,8 +18,9 @@ class ProjectGenerationService(ProjectServiceInterface):
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {OPENAI_API_KEY}'
         }
-        prompt = (f"Create a comprehensive README for a software project using {language}. " +
+        prompt = (f"Create a comprehensive original README for a software project using {language}. " +
                   "The README should have a title\n" +  # Added newline for proper formatting
+                  "The README should include an original idea that solves a problem or improves an existing project. " +
                   "The README should begin with an engaging introduction that explains the purpose of the project and its relevance. " +
                   f"Include detailed sections on the following: \n" +
                   "- **Project Goals**: Describe what the project aims to achieve and the problems it solves. \n" +

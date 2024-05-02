@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Signup from './Signup';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route,Navigate } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
 import Generation from './Generation';
@@ -15,6 +15,7 @@ function App() {
         <Route path='/login' element={<Login />}></Route>
         <Route path='/home' element={<Home />}></Route>
         <Route path='/generation' element={<Generation/>}></Route>
+        <Route path='/*' element={<Navigate to='/login' />}></Route>
       </Routes>
     </BrowserRouter>
   )

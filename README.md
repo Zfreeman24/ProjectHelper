@@ -18,6 +18,11 @@ The architecture of the Project Helper is designed to be intuitive and scalable,
 
 ![Class Diagram](classDiagram.png)
 
+# System Statechart Diagram
+The System Statechart Diagram for Project Helper shows the transitions that you will go through to register or log in to your account and generating a project. 
+
+![projectgen (3)](https://github.com/Zfreeman24/ProjectHelper/assets/111816421/db58a2cc-15fc-40c4-a42b-5291c5cb4895)
+
 # Application Components Overview
 
 ## Frontend Components (React)

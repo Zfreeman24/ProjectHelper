@@ -4,6 +4,7 @@ import requests
 import os
 from dotenv import load_dotenv
 import subprocess
+from subprocess import CalledProcessError
 from ..interfaces.project_service_interface import ProjectServiceInterface
 
 load_dotenv()
@@ -47,37 +48,41 @@ class ProjectGenerationService(ProjectServiceInterface):
         headers = {'Authorization': f'token {token}'}
         data = {'name': repo_name}
         response = requests.post('https://api.github.com/user/repos', json=data, headers=headers)
+        
         if response.status_code == 201:
             repo_url = response.json().get('html_url')
-            dir_path = f"./{repo_name}"
+            if not repo_url:
+                return jsonify({'error': 'GitHub repo URL not obtained'}), 500
+            
+            dir_path = os.path.abspath(repo_name)
             os.makedirs(dir_path, exist_ok=True)
             os.chdir(dir_path)
-
-            # Print current working directory
-            print("Current working directory:", os.getcwd())
-
-            # Attempt to create the README.md file
+            
             try:
+                subprocess.run(["git", "init"], check=True)
                 with open('README.md', 'w') as file:
                     file.write(readme_content)
-                print("README.md file created successfully.")
-            except Exception as e:
-                print("Failed to create README.md file:", e)
-
-            # Debugging statement to check if README.md file exists
-            print("Files in directory:", os.listdir())
-
-            # Rest of the code to initialize Git repository and push to GitHub
-            subprocess.run(["git", "init"], check=True)
-            subprocess.run(["git", "add", "."], check=True)
-            subprocess.run(["git", "commit", "-m", "Initial commit with README and code"], check=True)
-            subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
-            subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
-
-            os.chdir("..")
-            return repo_url
+                subprocess.run(["git", "add", "."], check=True)
+                subprocess.run(["git", "commit", "-m", "Initial commit with README", "--no-verify"], check=True)
+                
+                subprocess.run(["git", "remote", "add", "origin", repo_url], check=True)
+                # Check if remote main branch exists before pulling
+                try:
+                    subprocess.run(["git", "fetch"], check=True)
+                    subprocess.run(["git", "pull", "origin", "main"], check=True)
+                except subprocess.CalledProcessError:
+                    print("No remote branch to pull from; skipping pull.")
+                
+                subprocess.run(["git", "push", "-u", "origin", "main"], check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Git command failed: {e}")
+                return jsonify({'error': 'Git command failed', 'details': str(e)}), 500
+            finally:
+                os.chdir("..")  # Return to original directory
+            
+            return jsonify({'repoUrl': repo_url})
         else:
-            return "Failed to create repository"
+            return jsonify({'error': 'Failed to create GitHub repository', 'status_code': response.status_code}), 500
 
 project_service = ProjectGenerationService()
 
@@ -90,7 +95,7 @@ def generate_route():
 @app.route('/create-repo', methods=['POST'])
 def create_repo_route():
     data = request.get_json()
-    repo_url = project_service.create_repository(data['repoName'], data['readmeContent'], data['gitHubToken'])  
+    repo_url = project_service.create_repository(data['repoName'], data['readmeContent'], data['gitHubToken'])
     return jsonify({'repoUrl': repo_url})
 
 if __name__ == '__main__':

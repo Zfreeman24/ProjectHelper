@@ -19,22 +19,22 @@ login_collection = db['login_info']
 logging.basicConfig(level=logging.INFO)
 
 class AuthenticationService(AuthInterface):
-    def verify_login(email, password):
+   def verify_login(self, email, password):
         user = login_collection.find_one({'email': email})
-        if user and bcrypt.checkpw(password.encode('utf-8'), user['password']) and user['isVerified']:
-            return True, 'Login successful'
-        else:
-            return False, 'Invalid credentials or not verified'
+        if user:
+            # Check if 'isVerified' key exists, default to False if not present
+            is_verified = user.get('isVerified', False)
+            if password == user['password'] and is_verified:
+                return True, 'Login successful'
+        return False, 'Invalid credentials or not verified'
 
-    def register(name, email, password, is_verified):
-        if isinstance(password, str):  # Check if the password is a string and convert if necessary
+   def register(self, name, email, password, is_verified):  # `self` comes first in the argument list
+        if isinstance(password, str):  # Ensure password is a byte string
             password = password.encode('utf-8')
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password, salt)
         user_data = {
             'name': name,
             'email': email,
-            'password': hashed_password,
+            'password': password,
             'isVerified': is_verified
         }
         login_collection.insert_one(user_data)
@@ -55,8 +55,13 @@ def login_route():
 @app.route('/register', methods=['POST'])
 def register_route():
     data = request.json
-    message = auth_service.register(data['name'], data['email'], data['password'], data['isVerified'])
+    password = data['password']
+    print(password)
+    name = data['name']
+    email = data['email']
+    is_verified = data['isVerified']
+    message = auth_service.register(name, email, password, is_verified)
     return jsonify({'message': message})
 
 if __name__ == '__main__':
-    app.run(debug=os.getenv('FLASK_DEBUG', False))
+    app.run(host = "localhost", debug=os.getenv('FLASK_DEBUG', False))

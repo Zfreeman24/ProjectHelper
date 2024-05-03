@@ -51,7 +51,7 @@ function Generation() {
                 readmeContent: revealedText
             });
             if (response.data.repoUrl) {
-                setRepoUrl(response.data.repoUrl);
+                alert('Successfully created GitHub repository.');
             } else {
                 alert('Failed to create GitHub repository. Please check the provided GitHub token and try again.');
             }

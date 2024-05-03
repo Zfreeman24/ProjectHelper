@@ -13,7 +13,7 @@ function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post('http://localhost:5000/register', { name, email, password, isVerified }, { withCredentials: false })
+      .post('http://localhost:5000/register', { name, email, password, isVerified })
       .then((response) => {
         console.log(response.data);
         setShowModal(true);  // Show the modal on successful registration
